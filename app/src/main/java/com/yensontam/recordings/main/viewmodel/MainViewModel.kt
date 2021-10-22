@@ -7,8 +7,7 @@ import com.yensontam.recordings.factory.FragmentFactory
 import com.yensontam.recordings.main.model.TabViewItem
 import com.yensontam.recordings.main.state.*
 
-
-class MainActivityViewModel : ViewModel() {
+class MainViewModel : ViewModel() {
 
   val stateLiveData = MutableLiveData(MainActivityState(FragmentFactory(), listOf()))
   val effectSingleLiveEvent = SingleLiveEvent<MainActivityViewEffect>()

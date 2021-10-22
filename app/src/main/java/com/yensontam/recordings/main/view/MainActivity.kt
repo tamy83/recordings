@@ -10,12 +10,12 @@ import com.yensontam.recordings.factory.FragmentFactory
 import com.yensontam.recordings.main.state.MainActivityIntent
 import com.yensontam.recordings.main.state.MainActivityState
 import com.yensontam.recordings.main.state.MainActivityViewEffect
-import com.yensontam.recordings.main.viewmodel.MainActivityViewModel
+import com.yensontam.recordings.main.viewmodel.MainViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity: AppCompatActivity() {
 
   private lateinit var binding: ActivityMainBinding
-  private lateinit var viewModel: MainActivityViewModel
+  private lateinit var viewModel: MainViewModel
   private lateinit var pagerAdapter: MainActivityPagerAdapter
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,8 +24,8 @@ class MainActivity : AppCompatActivity() {
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    val mainActivityViewModel: MainActivityViewModel by viewModels()
-    viewModel = mainActivityViewModel
+    val mainViewModel: MainViewModel by viewModels()
+    viewModel = mainViewModel
     viewModel.onIntentReceived(MainActivityIntent.LoadedIntent)
 
     val initialState = viewModel.stateLiveData.value ?: MainActivityState(FragmentFactory(), listOf())

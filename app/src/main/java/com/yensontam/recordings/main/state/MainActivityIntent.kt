@@ -1,6 +1,8 @@
 package com.yensontam.recordings.main.state
 
-sealed class MainActivityIntent {
+import com.yensontam.recordings.state.IIntent
+
+sealed class MainActivityIntent: IIntent{
   object LoadedIntent : MainActivityIntent()
   data class SelectedTabIntent(val position: Int) : MainActivityIntent()
 }
