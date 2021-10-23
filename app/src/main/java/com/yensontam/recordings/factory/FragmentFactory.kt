@@ -3,6 +3,7 @@ package com.yensontam.recordings.factory
 import androidx.fragment.app.Fragment
 import com.yensontam.recordings.main.state.Tab
 import com.yensontam.recordings.record.RecordFragment
+import com.yensontam.recordings.recordings.view.RecordingsFragment
 
 class FragmentFactory : FragmentProvider {
 
@@ -11,7 +12,7 @@ class FragmentFactory : FragmentProvider {
       Tab.RECORD ->
         RecordFragment()
       Tab.RECORDINGS ->
-        RecordFragment()
+        RecordingsFragment()
     }
   }
 }

@@ -1,27 +1,20 @@
 package com.yensontam.recordings.record
 
 import android.Manifest
-import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.style.TtsSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputEditText
-import com.yensontam.recordings.R
 import com.yensontam.recordings.camera.view.CameraActivity
 import com.yensontam.recordings.databinding.FragmentRecordBinding
 

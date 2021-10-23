@@ -1,7 +1,7 @@
 package com.yensontam.recordings.camera.state
 
 import android.content.Intent
-import com.yensontam.recordings.state.IIntent
+import com.yensontam.recordings.mvi.IIntent
 
 sealed class CameraActivityIntent: IIntent {
   data class LoadedIntent(val intent: Intent): CameraActivityIntent()
@@ -10,7 +10,6 @@ sealed class CameraActivityIntent: IIntent {
   object CameraStopIntent: CameraActivityIntent()
   object PauseIntent: CameraActivityIntent()
   object ResumeIntent: CameraActivityIntent()
-  object StopIntent: CameraActivityIntent()
   object ErrorIntent: CameraActivityIntent()
   object FileSavedIntent: CameraActivityIntent()
 }

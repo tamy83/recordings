@@ -1,6 +1,6 @@
 package com.yensontam.recordings.camera.state
 
-import com.yensontam.recordings.state.IAction
+import com.yensontam.recordings.mvi.IAction
 
 sealed class CameraActivityAction: IAction {
   data class SetFilePathAction(val filePath: String) : CameraActivityAction()

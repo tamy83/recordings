@@ -1,4 +1,4 @@
-package com.yensontam.recordings.main.viewmodel;
+package com.yensontam.recordings;
 /*
  *  Copyright 2017 Google Inc.
  *

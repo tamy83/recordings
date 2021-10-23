@@ -6,11 +6,13 @@ import com.yensontam.recordings.R
 import com.yensontam.recordings.factory.FragmentFactory
 import com.yensontam.recordings.main.model.TabViewItem
 import com.yensontam.recordings.main.state.*
+import com.yensontam.recordings.SingleLiveEvent
 
 class MainViewModel : ViewModel() {
 
   val stateLiveData = MutableLiveData(MainActivityState(FragmentFactory(), listOf()))
-  val effectSingleLiveEvent = SingleLiveEvent<MainActivityViewEffect>()
+  val effectSingleLiveEvent =
+    SingleLiveEvent<MainActivityViewEffect>()
 
   private val currentState: MainActivityState
     get() {

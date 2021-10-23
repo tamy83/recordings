@@ -2,8 +2,8 @@ package com.yensontam.recordings.main.state
 
 import com.yensontam.recordings.factory.FragmentProvider
 import com.yensontam.recordings.main.model.TabViewItem
-import com.yensontam.recordings.state.IAction
-import com.yensontam.recordings.state.IState
+import com.yensontam.recordings.mvi.IAction
+import com.yensontam.recordings.mvi.IState
 
 data class MainActivityState(
   val fragmentProvider: FragmentProvider,
