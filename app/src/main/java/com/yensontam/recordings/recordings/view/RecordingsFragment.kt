@@ -12,11 +12,12 @@ import com.yensontam.recordings.databinding.FragmentRecordingsBinding
 import com.yensontam.recordings.recordings.state.RecordingsIntent
 import com.yensontam.recordings.recordings.state.RecordingsState
 import com.yensontam.recordings.recordings.viewmodel.RecordingsViewModel
+import org.koin.android.ext.android.inject
 
 class RecordingsFragment: Fragment() {
 
   private var _binding: FragmentRecordingsBinding? = null
-  private lateinit var viewModel: RecordingsViewModel
+  private val viewModel: RecordingsViewModel by inject()
 
   private val binding get() = _binding!!
   private lateinit var recordingsRecyclerView: RecyclerView
@@ -36,8 +37,6 @@ class RecordingsFragment: Fragment() {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    val recordingsViewModel: RecordingsViewModel by viewModels()
-    viewModel = recordingsViewModel
     viewModel.stateLiveData.observe(viewLifecycleOwner, {
       renderState(it)
     })

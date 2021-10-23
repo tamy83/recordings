@@ -5,13 +5,14 @@ import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.yensontam.recordings.Config
 import com.yensontam.recordings.camera.state.*
 import com.yensontam.recordings.camera.view.CameraActivity
 import com.yensontam.recordings.SingleLiveEvent
 import kotlinx.coroutines.launch
 import java.io.File
 
-class CameraViewModel(application: Application): AndroidViewModel(application) {
+class CameraViewModel(application: Application, private val config: Config): AndroidViewModel(application) {
 
   val stateLiveData = MutableLiveData(CameraActivityState(0))
   val effectSingleLiveEvent =
@@ -34,15 +35,6 @@ class CameraViewModel(application: Application): AndroidViewModel(application) {
     when (intent) {
       is CameraActivityIntent.LoadedIntent -> {
         handledLoadedIntent(intent)
-      }
-      is CameraActivityIntent.PauseIntent -> {
-        handlePauseIntent(intent)
-      }
-      is CameraActivityIntent.ResumeIntent -> {
-
-      }
-      is CameraActivityIntent.CameraIdleIntent -> {
-        handledCameraIdleIntent(intent)
       }
       is CameraActivityIntent.CameraStreamingIntent -> {
         handledCameraStreamingIntent(intent)
@@ -67,12 +59,7 @@ class CameraViewModel(application: Application): AndroidViewModel(application) {
     if (fileName != null && duration > 0) {
       this.fileName = fileName
       durationMs = (duration * 1000).toLong()
-      val directory = getApplication<Application>().getExternalFilesDir("recordings")?.path
-      if (directory == null) {
-        effectSingleLiveEvent.postValue(CameraActivityViewEffect.Finish)
-        return
-      }
-      recordingsDirectory = directory
+      recordingsDirectory = config.recordingsDirectory
       stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.HasTimeRemainingAction(duration)))
       effectSingleLiveEvent.postValue(CameraActivityViewEffect.Prepare)
     } else {
@@ -83,14 +70,6 @@ class CameraViewModel(application: Application): AndroidViewModel(application) {
   private fun handledCameraStreamingIntent(intent: CameraActivityIntent.CameraStreamingIntent) {
     startTimer()
     effectSingleLiveEvent.postValue(CameraActivityViewEffect.Record(filePath = filePath))
-  }
-
-  private fun handledCameraIdleIntent(intent: CameraActivityIntent.CameraIdleIntent) {
-    //stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.OneTimeAction(CameraActivityViewEffect.Pause)))
-  }
-
-  private fun handlePauseIntent(intent: CameraActivityIntent.PauseIntent) {
-    effectSingleLiveEvent.postValue(CameraActivityViewEffect.Stop)
   }
 
   private fun handleCameraStopIntent(intent: CameraActivityIntent.CameraStopIntent) {

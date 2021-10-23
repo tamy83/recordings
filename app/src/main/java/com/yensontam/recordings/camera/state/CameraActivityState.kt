@@ -16,15 +16,10 @@ data class CameraActivityState(
       }
       is CameraActivityAction.OneTimeAction -> {
         when (action.viewEffect) {
-          CameraActivityViewEffect.Finish -> {
-          }
-          CameraActivityViewEffect.Stop -> {
-          }
-          CameraActivityViewEffect.Prepare -> {
-
-          }
-          is CameraActivityViewEffect.Record -> {
-          }
+          CameraActivityViewEffect.Finish -> { }
+          CameraActivityViewEffect.Stop -> { }
+          CameraActivityViewEffect.Prepare -> { }
+          is CameraActivityViewEffect.Record -> { }
         }
       }
     }

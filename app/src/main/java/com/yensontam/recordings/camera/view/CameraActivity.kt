@@ -22,13 +22,14 @@ import com.yensontam.recordings.camera.state.CameraActivityState
 import com.yensontam.recordings.camera.state.CameraActivityViewEffect
 import com.yensontam.recordings.camera.viewmodel.CameraViewModel
 import com.yensontam.recordings.databinding.ActivityCameraBinding
+import org.koin.android.ext.android.inject
 import java.io.File
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 class CameraActivity: AppCompatActivity() {
 
-  private lateinit var viewModel: CameraViewModel
+  private val viewModel: CameraViewModel by inject()
   private lateinit var binding: ActivityCameraBinding
   private lateinit var timeLeftTextView: TextView
   private lateinit var cameraExecutor: Executor
@@ -42,10 +43,6 @@ class CameraActivity: AppCompatActivity() {
 
     binding = ActivityCameraBinding.inflate(layoutInflater)
     setContentView(binding.root)
-
-    val cameraViewModel: CameraViewModel by viewModels()
-
-    viewModel = cameraViewModel
     viewModel.onIntentReceived(CameraActivityIntent.LoadedIntent(intent))
 
     viewModel.stateLiveData.observe(this, {

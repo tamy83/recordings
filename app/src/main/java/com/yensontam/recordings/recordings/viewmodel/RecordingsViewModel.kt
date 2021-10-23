@@ -4,16 +4,19 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.yensontam.recordings.main.state.*
+import com.yensontam.recordings.Config
 import com.yensontam.recordings.media.MediaMetadataRetrieverHelperImpl
 import com.yensontam.recordings.mvi.Data
+import com.yensontam.recordings.recordings.RecordingsInteractor
 import com.yensontam.recordings.recordings.RecordingsInteractorImpl
 import com.yensontam.recordings.recordings.state.RecordingsAction
 import com.yensontam.recordings.recordings.state.RecordingsIntent
 import com.yensontam.recordings.recordings.state.RecordingsState
 import kotlinx.coroutines.launch
 
-class RecordingsViewModel(application: Application) : AndroidViewModel(application) {
+class RecordingsViewModel(application: Application,
+                          private val config: Config,
+                          private val interactor: RecordingsInteractor) : AndroidViewModel(application) {
 
   val stateLiveData = MutableLiveData(RecordingsState())
 
@@ -21,8 +24,6 @@ class RecordingsViewModel(application: Application) : AndroidViewModel(applicati
     get() {
       return stateLiveData.value ?: RecordingsState()
     }
-
-  private val interactor = RecordingsInteractorImpl(MediaMetadataRetrieverHelperImpl())
 
   fun onIntentReceived(intent: RecordingsIntent) {
     when(intent) {
@@ -34,10 +35,7 @@ class RecordingsViewModel(application: Application) : AndroidViewModel(applicati
 
   private fun handleLoadedIntent(intent: RecordingsIntent.LoadedIntent) {
     viewModelScope.launch {
-      val directory = getApplication<Application>().getExternalFilesDir("recordings")?.path
-      if (directory == null) {
-        return@launch
-      }
+      val directory = config.recordingsDirectory
       val result = interactor.getRecordingViewItems(directory)
       when (result) {
         is Data.Success -> {
