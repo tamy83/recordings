@@ -5,42 +5,40 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.yensontam.recordings.Config
-import com.yensontam.recordings.media.MediaMetadataRetrieverHelperImpl
 import com.yensontam.recordings.mvi.Data
 import com.yensontam.recordings.recordings.RecordingsInteractor
-import com.yensontam.recordings.recordings.RecordingsInteractorImpl
-import com.yensontam.recordings.recordings.state.RecordingsAction
-import com.yensontam.recordings.recordings.state.RecordingsIntent
-import com.yensontam.recordings.recordings.state.RecordingsState
+import com.yensontam.recordings.recordings.state.RecordingsFragmentAction
+import com.yensontam.recordings.recordings.state.RecordingsFragmentIntent
+import com.yensontam.recordings.recordings.state.RecordingsFragmentState
 import kotlinx.coroutines.launch
 
 class RecordingsViewModel(application: Application,
                           private val config: Config,
                           private val interactor: RecordingsInteractor) : AndroidViewModel(application) {
 
-  val stateLiveData = MutableLiveData(RecordingsState())
+  val stateLiveData = MutableLiveData(RecordingsFragmentState())
 
-  private val currentState: RecordingsState
+  private val currentState: RecordingsFragmentState
     get() {
-      return stateLiveData.value ?: RecordingsState()
+      return stateLiveData.value ?: RecordingsFragmentState()
     }
 
-  fun onIntentReceived(intent: RecordingsIntent) {
+  fun onIntentReceived(intent: RecordingsFragmentIntent) {
     when(intent) {
-      is RecordingsIntent.LoadedIntent -> {
+      is RecordingsFragmentIntent.LoadedIntent -> {
         handleLoadedIntent(intent)
       }
     }
   }
 
-  private fun handleLoadedIntent(intent: RecordingsIntent.LoadedIntent) {
+  private fun handleLoadedIntent(intent: RecordingsFragmentIntent.LoadedIntent) {
     viewModelScope.launch {
       val directory = config.recordingsDirectory
       val result = interactor.getRecordingViewItems(directory)
       when (result) {
         is Data.Success -> {
           val recordingViewItems = result.value
-          stateLiveData.postValue(currentState.consumeAction(RecordingsAction.HasRecordingsAction(recordingViewItems)))
+          stateLiveData.postValue(currentState.consumeAction(RecordingsFragmentAction.HasRecordingsFragmentAction(recordingViewItems)))
         }
         is Data.Failure -> {
           // handle error
