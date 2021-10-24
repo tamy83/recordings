@@ -9,7 +9,6 @@ import com.yensontam.recordings.databinding.ActivityMainBinding
 import com.yensontam.recordings.factory.FragmentFactory
 import com.yensontam.recordings.main.state.MainActivityIntent
 import com.yensontam.recordings.main.state.MainActivityState
-import com.yensontam.recordings.main.state.MainActivityViewEffect
 import com.yensontam.recordings.main.viewmodel.MainViewModel
 
 class MainActivity: AppCompatActivity() {
@@ -29,7 +28,7 @@ class MainActivity: AppCompatActivity() {
     viewModel.onIntentReceived(MainActivityIntent.LoadedIntent)
 
     val initialState = viewModel.stateLiveData.value ?: MainActivityState(FragmentFactory(), listOf())
-    pagerAdapter = MainActivityPagerAdapter(this, supportFragmentManager, initialState, viewModel = viewModel)
+    pagerAdapter = MainActivityPagerAdapter(this, supportFragmentManager, initialState)
     val viewPager: ViewPager = binding.viewPager
     viewPager.adapter = pagerAdapter
     val tabs: TabLayout = binding.tabs
@@ -38,18 +37,10 @@ class MainActivity: AppCompatActivity() {
     viewModel.stateLiveData.observe(this, {
       renderState(it)
     })
-
-    viewModel.effectSingleLiveEvent.observe(this, {
-      showViewEffect(it)
-    })
   }
 
   private fun renderState(state: MainActivityState) {
     pagerAdapter.mainActivityState = state
-  }
-
-  private fun showViewEffect(viewEffect: MainActivityViewEffect) {
-
   }
 
 }

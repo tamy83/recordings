@@ -2,6 +2,7 @@ package com.yensontam.recordings
 
 import android.app.Application
 import com.yensontam.recordings.di.cameraViewModelModule
+import com.yensontam.recordings.di.recordViewModelModule
 import com.yensontam.recordings.di.recordingsViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -27,6 +28,7 @@ class RecordingsApp : Application() {
       modules(
         listOf(
           cameraViewModelModule,
+          recordViewModelModule,
           recordingsViewModelModule
         )
       )

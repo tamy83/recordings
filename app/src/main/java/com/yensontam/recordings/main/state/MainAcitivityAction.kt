@@ -5,5 +5,4 @@ import com.yensontam.recordings.mvi.IAction
 
 sealed class MainAcitivityAction: IAction {
   data class HasTabsAction(val tabViewItems: List<TabViewItem>) : MainAcitivityAction()
-  data class OneTimeAction(val viewEffect: MainActivityViewEffect) : MainAcitivityAction()
 }

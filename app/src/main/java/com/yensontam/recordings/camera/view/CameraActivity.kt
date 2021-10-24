@@ -149,6 +149,7 @@ class CameraActivity: AppCompatActivity() {
   companion object {
     const val EXTRA_FILE_NAME = "extra_file_name"
     const val EXTRA_DURATION_SECONDS = "extra_duration"
+    val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
 
     @JvmStatic
     fun getStartIntent(context: Context, fileName: String, duration: Int): Intent {

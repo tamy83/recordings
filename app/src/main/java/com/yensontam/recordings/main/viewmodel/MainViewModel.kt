@@ -10,22 +10,18 @@ import com.yensontam.recordings.SingleLiveEvent
 
 class MainViewModel : ViewModel() {
 
-  val stateLiveData = MutableLiveData(MainActivityState(FragmentFactory(), listOf()))
-  val effectSingleLiveEvent =
-    SingleLiveEvent<MainActivityViewEffect>()
+  private val initialState = MainActivityState(FragmentFactory(), listOf())
+  val stateLiveData = MutableLiveData(initialState)
 
   private val currentState: MainActivityState
     get() {
-      return stateLiveData.value ?: MainActivityState(FragmentFactory(), listOf())
+      return stateLiveData.value ?: initialState
     }
 
   fun onIntentReceived(intent: MainActivityIntent) {
     when(intent) {
       is MainActivityIntent.LoadedIntent -> {
         handleLoadedIntent(intent)
-      }
-      is MainActivityIntent.SelectedTabIntent -> {
-        handleSelectedTabIntent(intent)
       }
     }
   }
@@ -34,9 +30,6 @@ class MainViewModel : ViewModel() {
     stateLiveData.value = currentState.consumeAction(MainAcitivityAction.HasTabsAction(tabViewItems = getTabViewItems()))
   }
 
-  private fun handleSelectedTabIntent(intent: MainActivityIntent.SelectedTabIntent) {
-
-  }
 
   private fun getTabViewItems(): List<TabViewItem> {
     val list = mutableListOf<TabViewItem>()

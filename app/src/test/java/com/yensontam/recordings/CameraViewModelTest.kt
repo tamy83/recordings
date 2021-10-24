@@ -21,7 +21,7 @@ import org.junit.Test
 import org.junit.rules.TestRule
 import java.io.File
 
-class CameraViewModelUnitTest {
+class CameraViewModelTest {
 
   @get:Rule
   var rule: TestRule = InstantTaskExecutorRule()

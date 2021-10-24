@@ -3,6 +3,6 @@
     <string name="tab_title_record">Record</string>
     <string name="tab_title_recordings">Saved Recordings</string>
     <string name="name_input_hint">File Name</string>
-    <string name="record_button_text">Record</string>
+    <string name="start_camera_button_text">Start Camera</string>
     <string name="label_camera_activity">Camera</string>
 </resources>

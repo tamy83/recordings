@@ -6,8 +6,8 @@ import com.yensontam.recordings.helper.CoroutinesTestRule
 import com.yensontam.recordings.mvi.Data
 import com.yensontam.recordings.recordings.RecordingsInteractor
 import com.yensontam.recordings.recordings.model.RecordingViewItem
-import com.yensontam.recordings.recordings.state.RecordingsFragmentIntent
-import com.yensontam.recordings.recordings.state.RecordingsFragmentState
+import com.yensontam.recordings.recordings.state.RecordingsIntent
+import com.yensontam.recordings.recordings.state.RecordingsState
 import com.yensontam.recordings.recordings.viewmodel.RecordingsViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -20,7 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TestRule
 
-class RecordingsViewModelUnitTest {
+class RecordingsViewModelTest {
 
   @get:Rule
   var rule: TestRule = InstantTaskExecutorRule()
@@ -39,7 +39,7 @@ class RecordingsViewModelUnitTest {
 
   lateinit var viewModel: RecordingsViewModel
 
-  private val currentState: RecordingsFragmentState
+  private val currentState: RecordingsState
     get() {
       return viewModel.stateLiveData.value!!
     }
@@ -56,17 +56,17 @@ class RecordingsViewModelUnitTest {
   fun `test loaded intent`() {
     var recordingsList = createRecordingViewItems(0)
     coEvery { interactor.getRecordingViewItems(any()) } returns Data.Success(recordingsList)
-    viewModel.onIntentReceived(RecordingsFragmentIntent.LoadedIntent)
+    viewModel.onIntentReceived(RecordingsIntent.LoadedIntent)
     assertEquals(0, currentState.recordingViewItems.size)
 
     recordingsList = createRecordingViewItems(5)
     coEvery { interactor.getRecordingViewItems(any()) } returns Data.Success(recordingsList)
-    viewModel.onIntentReceived(RecordingsFragmentIntent.LoadedIntent)
+    viewModel.onIntentReceived(RecordingsIntent.LoadedIntent)
     assertEquals(5, currentState.recordingViewItems.size)
 
     recordingsList = createRecordingViewItems(8)
     coEvery { interactor.getRecordingViewItems(any()) } returns Data.Success(recordingsList)
-    viewModel.onIntentReceived(RecordingsFragmentIntent.LoadedIntent)
+    viewModel.onIntentReceived(RecordingsIntent.LoadedIntent)
     assertEquals(8, currentState.recordingViewItems.size)
   }
 

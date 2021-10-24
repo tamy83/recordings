@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yensontam.recordings.databinding.FragmentRecordingsBinding
-import com.yensontam.recordings.recordings.state.RecordingsFragmentIntent
-import com.yensontam.recordings.recordings.state.RecordingsFragmentState
+import com.yensontam.recordings.recordings.state.RecordingsIntent
+import com.yensontam.recordings.recordings.state.RecordingsState
 import com.yensontam.recordings.recordings.viewmodel.RecordingsViewModel
 import org.koin.android.ext.android.inject
 
@@ -47,10 +47,10 @@ class RecordingsFragment: Fragment() {
 
   override fun onResume() {
     super.onResume()
-    viewModel.onIntentReceived(RecordingsFragmentIntent.LoadedIntent)
+    viewModel.onIntentReceived(RecordingsIntent.LoadedIntent)
   }
 
-  private fun renderState(state: RecordingsFragmentState) {
+  private fun renderState(state: RecordingsState) {
     recordingsListAdapter.setData(state.recordingViewItems)
   }
 

@@ -4,5 +4,4 @@ import com.yensontam.recordings.mvi.IIntent
 
 sealed class MainActivityIntent: IIntent{
   object LoadedIntent : MainActivityIntent()
-  data class SelectedTabIntent(val position: Int) : MainActivityIntent()
 }
