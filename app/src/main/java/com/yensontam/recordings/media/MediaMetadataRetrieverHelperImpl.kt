@@ -9,14 +9,14 @@ class MediaMetadataRetrieverHelperImpl: MediaMetadataRetrieverHelper {
   private val retriever = MediaMetadataRetriever()
 
   override fun getMetadata(file: File): MediaMetadata? {
-    retriever.setDataSource(file.absolutePath)
-    val durationString = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) ?: return null
-    return try {
-      val durationLong = durationString.toLong()
-      MediaMetadata(fileName = file.name, durationMs = durationLong, timestamp = file.lastModified())
+    val durationLong = try {
+      retriever.setDataSource(file.absolutePath)
+      val durationString = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) ?: return null
+      durationString.toLong()
     } catch (e: Exception) {
-      null
+      -1L
     }
+    return MediaMetadata(fileName = file.name, durationMs = durationLong, timestamp = file.lastModified())
   }
 
   protected fun finalize() {
