@@ -29,6 +29,7 @@
             android:name=".camera.view.CameraActivity"
             android:exported="true"
             android:label="@string/label_camera_activity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Recordings.NoActionBar">
         </activity>
     </application>
