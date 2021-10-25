@@ -5,9 +5,7 @@ import android.content.Intent
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.yensontam.recordings.camera.CameraInteractor
 import com.yensontam.recordings.camera.CameraInteractorImpl
-import com.yensontam.recordings.camera.state.CameraActivityIntent
-import com.yensontam.recordings.camera.state.CameraActivityState
-import com.yensontam.recordings.camera.state.CameraActivityViewEffect
+import com.yensontam.recordings.camera.state.*
 import com.yensontam.recordings.camera.view.CameraActivity
 import com.yensontam.recordings.camera.viewmodel.CameraViewModel
 import com.yensontam.recordings.helper.CoroutinesTestRule
@@ -125,6 +123,53 @@ class CameraViewModelTest {
   fun `test camera vieweffect on interactor timer finish`() {
     interactor.listener.onTimerFinish()
     assertTrue(viewEffect is CameraActivityViewEffect.Stop)
+  }
+
+  @Test
+  fun `test orientation change`() {
+    repeat(360) {
+      viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(it))
+      when (it) {
+        in 0..44 -> {
+          assertEquals(Orientation.PORTRAIT, currentState.orientation)
+        }
+        in 315..359 -> {
+          assertEquals(Orientation.PORTRAIT, currentState.orientation)
+        }
+        in 45..134 -> {
+          assertEquals(Orientation.REVERSE_LANDSCAPE, currentState.orientation)
+        }
+        in 135..224 -> {
+          assertEquals(Orientation.REVERSE_PORTRAIT, currentState.orientation)
+        }
+        in 225..314 -> {
+          assertEquals(Orientation.LANDSCAPE, currentState.orientation)
+        }
+      }
+    }
+  }
+
+  @Test
+  fun `test unknown orientation does not affect state`() {
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(35))
+    assertEquals(Orientation.PORTRAIT, currentState.orientation)
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(-1))
+    assertEquals(Orientation.PORTRAIT, currentState.orientation)
+
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(90))
+    assertEquals(Orientation.REVERSE_LANDSCAPE, currentState.orientation)
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(-1))
+    assertEquals(Orientation.REVERSE_LANDSCAPE, currentState.orientation)
+
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(155))
+    assertEquals(Orientation.REVERSE_PORTRAIT, currentState.orientation)
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(-1))
+    assertEquals(Orientation.REVERSE_PORTRAIT, currentState.orientation)
+
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(275))
+    assertEquals(Orientation.LANDSCAPE, currentState.orientation)
+    viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(-1))
+    assertEquals(Orientation.LANDSCAPE, currentState.orientation)
   }
 
   private fun getIntent(fileName: String?, duration: Int) : Intent {

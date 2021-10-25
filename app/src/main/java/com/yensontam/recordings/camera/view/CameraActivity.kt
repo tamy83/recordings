@@ -6,9 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
@@ -26,6 +24,8 @@ import org.koin.android.ext.android.inject
 import java.io.File
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import android.hardware.SensorManager
+import android.view.OrientationEventListener
 
 class CameraActivity: AppCompatActivity() {
 
@@ -55,11 +55,13 @@ class CameraActivity: AppCompatActivity() {
     timeLeftTextView = binding.timeLeftTextView
     cameraExecutor = Executors.newSingleThreadExecutor()
     previewView = binding.cameraPreviewView
+    setupOrientationListener()
   }
 
 
   private fun renderState(state: CameraActivityState) {
     timeLeftTextView.text = state.secondsRemaining.toString()
+    timeLeftTextView.rotation = state.orientation.degreeRotation.toFloat()
   }
 
   private fun showViewEffect(viewEffect: CameraActivityViewEffect) {
@@ -144,6 +146,16 @@ class CameraActivity: AppCompatActivity() {
         viewModel.onIntentReceived(CameraActivityIntent.CameraStreamingIntent)
       }
     }
+  }
+
+  private fun setupOrientationListener() {
+    val listener: OrientationEventListener =
+      object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_UI) {
+        override fun onOrientationChanged(orientation: Int) {
+          viewModel.onIntentReceived(CameraActivityIntent.OrientationChangedIntent(orientation))
+        }
+      }
+    if (listener.canDetectOrientation()) listener.enable()
   }
 
   companion object {

@@ -9,4 +9,5 @@ sealed class CameraActivityIntent: IIntent {
   object CameraStopIntent: CameraActivityIntent()
   object ErrorIntent: CameraActivityIntent()
   object FileSavedIntent: CameraActivityIntent()
+  data class OrientationChangedIntent(val orientation: Int): CameraActivityIntent()
 }

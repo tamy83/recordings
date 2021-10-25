@@ -50,6 +50,9 @@ class CameraViewModel(application: Application, private val config: Config, priv
       is CameraActivityIntent.FileSavedIntent -> {
         handleFileSavedIntent(intent)
       }
+      is CameraActivityIntent.OrientationChangedIntent -> {
+        handleOrientationChangedIntent(intent)
+      }
     }
   }
 
@@ -84,6 +87,26 @@ class CameraViewModel(application: Application, private val config: Config, priv
 
   private fun handleFileSavedIntent(intent: CameraActivityIntent.FileSavedIntent) {
     effectSingleLiveEvent.postValue(CameraActivityViewEffect.Finish)
+  }
+
+  private fun handleOrientationChangedIntent(intent: CameraActivityIntent.OrientationChangedIntent) {
+    when (intent.orientation) {
+      in 0..44 -> {
+        stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.OrientationChangeAction(Orientation.PORTRAIT)))
+      }
+      in 315..359 -> {
+        stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.OrientationChangeAction(Orientation.PORTRAIT)))
+      }
+      in 45..134 -> {
+        stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.OrientationChangeAction(Orientation.REVERSE_LANDSCAPE)))
+      }
+      in 135..224 -> {
+        stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.OrientationChangeAction(Orientation.REVERSE_PORTRAIT)))
+      }
+      in 225..314 -> {
+        stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.OrientationChangeAction(Orientation.LANDSCAPE)))
+      }
+    }
   }
 
   private fun startTimer() {

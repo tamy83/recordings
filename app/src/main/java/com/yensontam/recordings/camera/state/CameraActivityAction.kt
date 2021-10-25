@@ -6,4 +6,5 @@ sealed class CameraActivityAction: IAction {
   data class SetFilePathAction(val filePath: String) : CameraActivityAction()
   data class HasTimeRemainingAction(val secondsRemaining: Int) : CameraActivityAction()
   data class OneTimeAction(val viewEffect: CameraActivityViewEffect) : CameraActivityAction()
+  data class OrientationChangeAction(val orientation: Orientation) : CameraActivityAction()
 }
