@@ -5,4 +5,5 @@
     <string name="name_input_hint">File Name</string>
     <string name="start_camera_button_text">Start Camera</string>
     <string name="label_camera_activity">Camera</string>
+    <string name="need_permissions_error_message">Permissions Required!</string>
 </resources>

@@ -3,6 +3,7 @@ package com.yensontam.recordings.record.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.yensontam.recordings.R
 import com.yensontam.recordings.SingleLiveEvent
 import com.yensontam.recordings.camera.view.CameraActivity
 import com.yensontam.recordings.helper.FileNameValidator
@@ -39,19 +40,24 @@ class RecordViewModel(application: Application, private val fileNameValidator: F
       return interactor.hasAllPermissions(CameraActivity.REQUIRED_PERMISSIONS, getApplication())
     }
 
+  var permissionsDenied = false
+
   fun onIntentReceived(intent: RecordIntent) {
     when(intent) {
       is RecordIntent.LoadedIntent -> {
         handleLoadedIntent(intent)
       }
       is RecordIntent.StartCameraIntent -> {
-        handleStartCameraIntent(intent)
+        handleStartCameraIntent()
       }
       is RecordIntent.SetFileNameIntent -> {
         handleSetFileNameIntent(intent)
       }
       is RecordIntent.SetDurationIntent -> {
         handleSetDurationIntent(intent)
+      }
+      is RecordIntent.PermissionsRequestResultIntent -> {
+        handlePermissionsRequestResultIntent(intent)
       }
     }
   }
@@ -60,15 +66,32 @@ class RecordViewModel(application: Application, private val fileNameValidator: F
     stateLiveData.postValue(initialState)
   }
 
-  private fun handleStartCameraIntent(intent: RecordIntent.StartCameraIntent) {
+  private fun handleStartCameraIntent() {
     if (!permissionsGranted) {
-      effectSingleLiveEvent.postValue(RecordViewEffect.RequestPermissionsViewEffect(CameraActivity.REQUIRED_PERMISSIONS))
+      if (!permissionsDenied) {
+        effectSingleLiveEvent.postValue(RecordViewEffect.RequestPermissionsViewEffect(CameraActivity.REQUIRED_PERMISSIONS))
+      } else {
+        showNeedPermissionErrorMessage()
+      }
     } else {
       val file = fileName
       file?.let {
         effectSingleLiveEvent.postValue(RecordViewEffect.StartCameraActivityViewEffect(file, duration.toInt()))
       }
     }
+  }
+
+  private fun handlePermissionsRequestResultIntent(intent: RecordIntent.PermissionsRequestResultIntent) {
+    val permissionsMap = intent.permissionsMap
+    permissionsDenied = permissionsMap.any {
+      !it.value
+    }
+    handleStartCameraIntent()
+  }
+
+  private fun showNeedPermissionErrorMessage() {
+    val errorMessage = getApplication<Application>().getString(R.string.need_permissions_error_message)
+    effectSingleLiveEvent.postValue(RecordViewEffect.ShowErrorMessageViewEffect(errorMessage))
   }
 
   private fun handleSetFileNameIntent(intent: RecordIntent.SetFileNameIntent) {

@@ -54,10 +54,15 @@ class RecordViewModelTest {
       return viewModel.effectSingleLiveEvent.value!!
     }
 
+  private val NEED_PERMISSIONS_ERROR = "Need Permissions!"
+  private val CAMERA = "CAMERA"
+  private val AUDIO = "AUDIO"
+
   @Before
   fun setup() {
     MockKAnnotations.init(this)
     every { fileNameValidator.isValidFileName(any()) } returns false
+    every { application.getString(R.string.need_permissions_error_message) } returns NEED_PERMISSIONS_ERROR
     viewModel = RecordViewModel(application, fileNameValidator, interactor)
   }
 
@@ -81,6 +86,10 @@ class RecordViewModelTest {
     viewModel.onIntentReceived(RecordIntent.StartCameraIntent)
     assertTrue(currentViewEffect is RecordViewEffect.StartCameraActivityViewEffect)
 
+    every { interactor.hasAllPermissions(any(), any()) } returns false
+    viewModel.permissionsDenied = true
+    viewModel.onIntentReceived(RecordIntent.StartCameraIntent)
+    assertTrue(currentViewEffect is RecordViewEffect.ShowErrorMessageViewEffect)
   }
 
   @Test
@@ -112,5 +121,19 @@ class RecordViewModelTest {
     duration = 70F
     viewModel.onIntentReceived(RecordIntent.SetDurationIntent(duration))
     assertEquals(duration, currentState.sliderInfo.value)
+  }
+
+  @Test
+  fun `test permissions request result intent`() {
+    `test set filename intent`()
+    every { interactor.hasAllPermissions(any(), any()) } returns false
+    var permissionsMap = mapOf(CAMERA to true, AUDIO to false)
+    viewModel.onIntentReceived(RecordIntent.PermissionsRequestResultIntent(permissionsMap))
+    assertTrue(currentViewEffect is RecordViewEffect.ShowErrorMessageViewEffect)
+
+    every { interactor.hasAllPermissions(any(), any()) } returns true
+    permissionsMap = mapOf(CAMERA to true, AUDIO to true)
+    viewModel.onIntentReceived(RecordIntent.PermissionsRequestResultIntent(permissionsMap))
+    assertTrue(currentViewEffect is RecordViewEffect.StartCameraActivityViewEffect)
   }
 }

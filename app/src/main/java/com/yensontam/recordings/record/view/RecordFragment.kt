@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.google.android.material.slider.Slider
@@ -100,13 +101,17 @@ class RecordFragment: Fragment() {
       }
       is RecordViewEffect.StartCameraActivityViewEffect -> {
         startCameraActivity(viewEffect.fileName, viewEffect.duration)
-
+      }
+      is RecordViewEffect.ShowErrorMessageViewEffect -> {
+        activity?.let {
+          Toast.makeText(activity, viewEffect.message, Toast.LENGTH_LONG).show()
+        }
       }
     }
   }
 
   val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-    viewModel.onIntentReceived(RecordIntent.StartCameraIntent)
+    viewModel.onIntentReceived(RecordIntent.PermissionsRequestResultIntent(it))
   }
 
   private fun startCameraActivity(fileName: String, duration: Int) {

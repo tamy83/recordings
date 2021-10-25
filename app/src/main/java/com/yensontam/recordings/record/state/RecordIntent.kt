@@ -7,4 +7,5 @@ sealed class RecordIntent: IIntent {
   data class SetDurationIntent(val duration: Float) : RecordIntent()
   data class SetFileNameIntent(val fileName: String) : RecordIntent()
   object StartCameraIntent : RecordIntent()
+  data class PermissionsRequestResultIntent(val permissionsMap: Map<String, Boolean>) : RecordIntent()
 }
