@@ -3,16 +3,17 @@ package com.yensontam.recordings
 import android.app.Application
 import android.content.Intent
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.yensontam.recordings.camera.CameraInteractor
+import com.yensontam.recordings.camera.CameraInteractorImpl
 import com.yensontam.recordings.camera.state.CameraActivityIntent
 import com.yensontam.recordings.camera.state.CameraActivityState
 import com.yensontam.recordings.camera.state.CameraActivityViewEffect
 import com.yensontam.recordings.camera.view.CameraActivity
 import com.yensontam.recordings.camera.viewmodel.CameraViewModel
 import com.yensontam.recordings.helper.CoroutinesTestRule
-import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockkClass
+import io.mockk.impl.annotations.SpyK
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -35,6 +36,9 @@ class CameraViewModelTest {
   @MockK
   lateinit var application: Application
 
+  @SpyK
+  private var interactor: CameraInteractor = CameraInteractorImpl()
+
   lateinit var viewModel: CameraViewModel
 
   private val currentState: CameraActivityState
@@ -52,9 +56,11 @@ class CameraViewModelTest {
   @Before
   fun setup() {
     MockKAnnotations.init(this)
-    viewModel = CameraViewModel(application, config)
 
     every { config.recordingsDirectory } returns directory
+    coEvery { interactor.startTimer(any(), any()) } returns Unit
+
+    viewModel = CameraViewModel(application, config, interactor)
   }
 
   @Test
@@ -84,6 +90,11 @@ class CameraViewModelTest {
     assertTrue(viewEffect is CameraActivityViewEffect.Record)
     assertEquals(directory + File.separator + fileName,
       (viewEffect as CameraActivityViewEffect.Record).filePath)
+    coVerify { interactor.startTimer(withArg {
+      assertEquals(5000, it)
+    }, withArg {
+      assertEquals(1000, it)
+    })}
   }
 
   @Test
@@ -102,6 +113,18 @@ class CameraViewModelTest {
   fun `test file saved intent`() {
     viewModel.onIntentReceived(CameraActivityIntent.FileSavedIntent)
     assertTrue(viewEffect is CameraActivityViewEffect.Finish)
+  }
+
+  @Test
+  fun `test camera state on interactor timer tick`() {
+    interactor.listener.onTimerTick(4000)
+    assertEquals(4, currentState.secondsRemaining)
+  }
+
+  @Test
+  fun `test camera vieweffect on interactor timer finish`() {
+    interactor.listener.onTimerFinish()
+    assertTrue(viewEffect is CameraActivityViewEffect.Stop)
   }
 
   private fun getIntent(fileName: String?, duration: Int) : Intent {

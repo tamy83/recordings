@@ -1,7 +1,6 @@
 package com.yensontam.recordings.camera.viewmodel
 
 import android.app.Application
-import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -9,10 +8,11 @@ import com.yensontam.recordings.Config
 import com.yensontam.recordings.camera.state.*
 import com.yensontam.recordings.camera.view.CameraActivity
 import com.yensontam.recordings.SingleLiveEvent
+import com.yensontam.recordings.camera.CameraInteractor
 import kotlinx.coroutines.launch
 import java.io.File
 
-class CameraViewModel(application: Application, private val config: Config): AndroidViewModel(application) {
+class CameraViewModel(application: Application, private val config: Config, private val interactor: CameraInteractor): AndroidViewModel(application), CameraInteractor.CameraInteractorListener {
 
   val stateLiveData = MutableLiveData(CameraActivityState(0))
   val effectSingleLiveEvent =
@@ -23,13 +23,15 @@ class CameraViewModel(application: Application, private val config: Config): And
       return stateLiveData.value ?: CameraActivityState(0)
     }
 
+  init {
+    interactor.listener = this
+  }
+
   private lateinit var recordingsDirectory: String
   private var durationMs = 0L
   private lateinit var fileName: String
   private val filePath: String
     get() = recordingsDirectory + File.separator + fileName
-
-  private lateinit var countDownTimer: CountDownTimer
 
   fun onIntentReceived(intent: CameraActivityIntent) {
     when (intent) {
@@ -86,18 +88,16 @@ class CameraViewModel(application: Application, private val config: Config): And
 
   private fun startTimer() {
     viewModelScope.launch {
-      countDownTimer = object : CountDownTimer(durationMs, 1000) {
-        override fun onTick(timeRemainingMs: Long) {
-          val timeRemainingInSeconds = (timeRemainingMs / 1000).toInt()
-          stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.HasTimeRemainingAction(timeRemainingInSeconds)))
-        }
-
-        override fun onFinish() {
-          effectSingleLiveEvent.postValue(CameraActivityViewEffect.Stop)
-        }
-      }
-      countDownTimer.start()
+      interactor.startTimer(durationMs, 1000)
     }
   }
 
+  override fun onTimerTick(timeRemainingMs: Long) {
+    val timeRemainingInSeconds = (timeRemainingMs / 1000).toInt()
+    stateLiveData.postValue(currentState.consumeAction(CameraActivityAction.HasTimeRemainingAction(timeRemainingInSeconds)))
+  }
+
+  override fun onTimerFinish() {
+    effectSingleLiveEvent.postValue(CameraActivityViewEffect.Stop)
+  }
 }

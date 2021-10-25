@@ -7,7 +7,6 @@ sealed class CameraActivityIntent: IIntent {
   data class LoadedIntent(val intent: Intent): CameraActivityIntent()
   object CameraStreamingIntent: CameraActivityIntent()
   object CameraStopIntent: CameraActivityIntent()
-  object PauseIntent: CameraActivityIntent()
   object ErrorIntent: CameraActivityIntent()
   object FileSavedIntent: CameraActivityIntent()
 }

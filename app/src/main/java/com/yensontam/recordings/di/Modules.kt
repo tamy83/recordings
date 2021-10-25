@@ -1,6 +1,7 @@
 package com.yensontam.recordings.di
 
 import com.yensontam.recordings.Config
+import com.yensontam.recordings.camera.CameraInteractorImpl
 import com.yensontam.recordings.camera.viewmodel.CameraViewModel
 import com.yensontam.recordings.helper.LetterOrDigitFileNameValidator
 import com.yensontam.recordings.media.MediaMetadataRetrieverHelperImpl
@@ -16,7 +17,8 @@ val cameraViewModelModule = module {
   viewModel {
     CameraViewModel(
       androidApplication(),
-      config = Config.instance
+      config = Config.instance,
+      interactor = CameraInteractorImpl()
     )
   }
 }
